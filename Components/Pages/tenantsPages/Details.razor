@@ -1,0 +1,58 @@
+﻿@page "/tenants/details"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>tenants</h2>
+    <hr />
+    @if (tenants is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">FirstName</dt>
+            <dd class="col-sm-10">@tenants.FirstName</dd>
+            <dt class="col-sm-2">LastName</dt>
+            <dd class="col-sm-10">@tenants.LastName</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@tenants.Email</dd>
+            <dt class="col-sm-2">PhoneNumber</dt>
+            <dd class="col-sm-10">@tenants.PhoneNumber</dd>
+            <dt class="col-sm-2">Address</dt>
+            <dd class="col-sm-10">@tenants.Address</dd>
+            <dt class="col-sm-2">EmergencyName</dt>
+            <dd class="col-sm-10">@tenants.EmergencyContactName</dd>
+            <dt class="col-sm-2">EmergencyPhone</dt>
+            <dd class="col-sm-10">@tenants.EmergencyContactPhone</dd>
+        </dl>
+        <div>
+            <a href="@($"/tenants/edit?id={tenants.Id}")">Edit</a> |
+            <a href="@($"/tenants")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private tenants? tenants;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        tenants = await context.tenants.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (tenants is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

@@ -1,0 +1,82 @@
+﻿@page "/tenants"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@using RentalSystem.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<RentalSystemContext> DbFactory
+
+<h1>Tenants</h1>
+
+<div>
+    <a href="tenants/create" class="btn btn-primary">Create New Tenant</a>
+</div>
+
+<div class="table-responsive">
+    @if (_loading)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
+                    <th>Emergency Contact</th>
+                    <th>Emergency Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tenant in tenantsList)
+                {
+                    <tr>
+                        <td>@tenant.FirstName</td>
+                        <td>@tenant.LastName</td>
+                        <td>@tenant.Email</td>
+                        <td>@tenant.PhoneNumber</td>
+                        <td>@tenant.Address</td>
+                        <td>@tenant.EmergencyContactName</td>
+                        <td>@tenant.EmergencyContactPhone</td>
+                        <td>
+                            <a href="@($"tenants/edit?id={tenant.Id}")" class="btn btn-sm btn-primary">Edit</a>
+                            <a href="@($"tenants/details?id={tenant.Id}")" class="btn btn-sm btn-secondary">Details</a>
+                            <a href="@($"tenants/delete?id={tenant.Id}")" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private RentalSystemContext context = default!;
+    private List<tenants> tenantsList = new();
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = await DbFactory.CreateDbContextAsync();
+        await LoadTenantsAsync();
+    }
+
+    private async Task LoadTenantsAsync()
+    {
+        _loading = true;
+        tenantsList = await context.tenants.ToListAsync();
+        _loading = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (context != null)
+        {
+            await context.DisposeAsync();
+        }
+    }
+}

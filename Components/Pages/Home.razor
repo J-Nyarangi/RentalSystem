@@ -1,0 +1,386 @@
+﻿@page "/"
+
+<div class="dashboard-container">
+    <h3 class="dashboard-title">Dashboard Overview</h3>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-header">
+                    <span class="stat-title">Total Properties</span>
+                    <i class="fas fa-building stat-icon"></i>
+                </div>
+                <p class="stat-value">12</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-header">
+                    <span class="stat-title">Active Tenants</span>
+                    <i class="fas fa-users stat-icon"></i>
+                </div>
+                <p class="stat-value">45</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-header">
+                    <span class="stat-title">Monthly Revenue</span>
+                    <i class="fas fa-dollar-sign stat-icon"></i>
+                </div>
+                <p class="stat-value">KES 450,000</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent Payments -->
+    <div class="section">
+        <div class="section-header">
+            <h3>Recent Payments</h3>
+            <button class="view-all">View All</button>
+        </div>
+        <div class="table-container">
+            <table class="payment-table">
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Property</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="tenant-info">
+                                <div class="avatar"></div>
+                                <span>John Doe</span>
+                            </div>
+                        </td>
+                        <td>Apartment 3B</td>
+                        <td>KES 25,000</td>
+                        <td>Mar 15, 2025</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="tenant-info">
+                                <div class="avatar"></div>
+                                <span>Jane Smith</span>
+                            </div>
+                        </td>
+                        <td>Unit 5A</td>
+                        <td>KES 30,000</td>
+                        <td>Mar 14, 2025</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Property Occupancy and Notifications Row -->
+    <div class="two-column-section">
+        <!-- Property Occupancy Column -->
+        <div class="column">
+            <h3>Property Occupancy</h3>
+            <div class="occupancy-list">
+                <div class="occupancy-card">
+                    <div class="occupancy-header">
+                        <span>Green Apartments</span>
+                        <span class="occupancy-rate">90%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 90%"></div>
+                    </div>
+                </div>
+
+                <div class="occupancy-card">
+                    <div class="occupancy-header">
+                        <span>Blue Heights</span>
+                        <span class="occupancy-rate">75%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 75%"></div>
+                    </div>
+                </div>
+
+                <div class="occupancy-card">
+                    <div class="occupancy-header">
+                        <span>Sunset Plaza</span>
+                        <span class="occupancy-rate">95%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 95%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Column -->
+        <div class="column">
+            <h3>Recent Notifications</h3>
+            <div class="notifications-list">
+                <div class="notification-item">
+                    <i class="fas fa-check-circle notification-icon success"></i>
+                    <div class="notification-content">
+                        <p>Payment received from John Doe</p>
+                        <span class="notification-time">2 hours ago</span>
+                    </div>
+                </div>
+
+                <div class="notification-item warning">
+                    <i class="fas fa-exclamation-circle notification-icon warning"></i>
+                    <div class="notification-content">
+                        <p>Overdue payment for Unit 2C</p>
+                        <span class="notification-time">1 day ago</span>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <i class="fas fa-user notification-icon info"></i>
+                    <div class="notification-content">
+                        <p>New tenant application received</p>
+                        <span class="notification-time">2 days ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashboard-container {
+        padding: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .dashboard-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-title {
+        color: #666;
+        font-size: 0.875rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .stat-icon {
+        color: #4f46e5;
+        font-size: 1.25rem;
+    }
+
+    /* Section Styling */
+    .section {
+        margin-bottom: 2rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .section h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .view-all {
+        color: #4f46e5;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Table Styling */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .payment-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .payment-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            color: #666;
+            background: #f9fafb;
+        }
+
+        .payment-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+    .tenant-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .avatar {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: #e5e7eb;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+        .status-badge.completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+    /* Two Column Layout */
+    .two-column-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Occupancy Cards */
+    .occupancy-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 100%;
+    }
+
+    .occupancy-card {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .occupancy-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .occupancy-rate {
+        color: #666;
+    }
+
+    .progress-bar {
+        background: #e5e7eb;
+        border-radius: 9999px;
+        height: 0.5rem;
+        overflow: hidden;
+    }
+
+    .progress {
+        background: #4f46e5;
+        height: 100%;
+        border-radius: 9999px;
+        transition: width 0.3s ease;
+    }
+
+    /* Notifications */
+    .notifications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        height: 100%;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 0.5rem;
+    }
+
+        .notification-item.warning {
+            background: #fff1f2;
+        }
+
+    .notification-icon {
+        font-size: 1rem;
+    }
+
+        .notification-icon.success {
+            color: #22c55e;
+        }
+
+        .notification-icon.warning {
+            color: #ef4444;
+        }
+
+        .notification-icon.info {
+            color: #3b82f6;
+        }
+
+    .notification-content p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+    .notification-time {
+        font-size: 0.75rem;
+        color: #666;
+    }
+
+  
+</style>

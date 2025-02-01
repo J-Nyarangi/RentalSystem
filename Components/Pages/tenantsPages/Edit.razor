@@ -1,0 +1,119 @@
+﻿@page "/tenants/edit"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>tenants</h2>
+<hr />
+@if (tenants is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="tenants" OnValidSubmit="Updatetenants" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="tenants.Id" value="@tenants.Id" />
+                <div class="mb-3">
+                    <label for="firstname" class="form-label">First Name:</label>
+                    <InputText id="firstname" @bind-Value="tenants.FirstName" class="form-control" />
+                    <ValidationMessage For="() => tenants.FirstName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastname" class="form-label">Last Name:</label>
+                    <InputText id="lastname" @bind-Value="tenants.LastName" class="form-control" />
+                    <ValidationMessage For="() => tenants.LastName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="tenants.Email" class="form-control" />
+                    <ValidationMessage For="() => tenants.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="phonenumber" class="form-label">Phone Number:</label>
+                    <InputText id="phonenumber" @bind-Value="tenants.PhoneNumber" class="form-control" />
+                    <ValidationMessage For="() => tenants.PhoneNumber" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <InputText id="address" @bind-Value="tenants.Address" class="form-control" />
+                    <ValidationMessage For="() => tenants.Address" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="emergencycontactname" class="form-label">Emergency Contact Name:</label>
+                    <InputText id="emergencycontactname" @bind-Value="tenants.EmergencyContactName" class="form-control" />
+                    <ValidationMessage For="() => tenants.EmergencyContactName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="emergencycontactphone" class="form-label">Emergency Contact Phone:</label>
+                    <InputText id="emergencycontactphone" @bind-Value="tenants.EmergencyContactPhone" class="form-control" />
+                    <ValidationMessage For="() => tenants.EmergencyContactPhone" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/tenants">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private tenants? tenants { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        tenants ??= await context.tenants.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (tenants is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task Updatetenants()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(tenants!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!tenantsExists(tenants!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/tenants");
+    }
+
+    private bool tenantsExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.tenants.Any(e => e.Id == id);
+    }
+}
