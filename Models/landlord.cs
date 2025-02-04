@@ -1,12 +1,16 @@
-﻿namespace RentalSystem.Models
-{
-    public class landlord
-    {
-        public int id { get; set; }
-        public string firstname { get; set; }
-        public string lastname { get; set; }
-        public string email { get; set; }
-        public string PasswordHash { get; set; }
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace RentalSystem.Models
+{
+    public class Landlord
+    {
+        [Key]
+
+        public int LandlordId {  get; set; }
+        public string FirstName { get; set; } = string.Empty;
+
+        public string LastName { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
     }
 }

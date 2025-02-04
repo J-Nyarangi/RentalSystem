@@ -14,6 +14,7 @@ namespace RentalSystem.Data
         {
         }
 
-        public DbSet<RentalSystem.Models.tenants> tenants { get; set; } = default!;
+        public DbSet<RentalSystem.Models.Tenant> Tenant { get; set; } = default!;
+        public DbSet<RentalSystem.Models.Property> Property { get; set; } = default!;
     }
 }
