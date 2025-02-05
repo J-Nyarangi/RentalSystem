@@ -1,0 +1,56 @@
+﻿@page "/properties/details"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Property</h2>
+    <hr />
+    @if (property is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Address</dt>
+            <dd class="col-sm-10">@property.Address</dd>
+            <dt class="col-sm-2">Unit_type</dt>
+            <dd class="col-sm-10">@property.Unit_type</dd>
+            <dt class="col-sm-2">Amount</dt>
+            <dd class="col-sm-10">@property.Amount</dd>
+            <dt class="col-sm-2">IsOccupied</dt>
+            <dd class="col-sm-10">@property.IsOccupied</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@property.Description</dd>
+            <dt class="col-sm-2">LandlordId</dt>
+            <dd class="col-sm-10">@property.LandlordId</dd>
+        </dl>
+        <div>
+            <a href="@($"/properties/edit?propertyid={property.PropertyId}")">Edit</a> |
+            <a href="@($"/properties")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Property? property;
+
+    [SupplyParameterFromQuery]
+    private int PropertyId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        property = await context.Property.FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
+
+        if (property is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
