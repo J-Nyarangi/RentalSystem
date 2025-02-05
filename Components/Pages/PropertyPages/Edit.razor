@@ -1,0 +1,114 @@
+﻿@page "/properties/edit"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Property</h2>
+<hr />
+@if (Property is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Property" OnValidSubmit="UpdateProperty" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Property.PropertyId" value="@Property.PropertyId" />
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <InputText id="address" @bind-Value="Property.Address" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Property.Address" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="unit_type" class="form-label">Unit_type:</label>
+                    <InputText id="unit_type" @bind-Value="Property.Unit_type" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Property.Unit_type" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Amount:</label>
+                    <InputNumber id="amount" @bind-Value="Property.Amount" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Property.Amount" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="isoccupied" class="form-label">IsOccupied:</label>
+                    <InputCheckbox id="isoccupied" @bind-Value="Property.IsOccupied" class="form-check-input" aria-required="true"/>
+                    <ValidationMessage For="() => Property.IsOccupied" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputText id="description" @bind-Value="Property.Description" class="form-control" />
+                    <ValidationMessage For="() => Property.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="landlordid" class="form-label">LandlordId:</label>
+                    <InputNumber id="landlordid" @bind-Value="Property.LandlordId" class="form-control" />
+                    <ValidationMessage For="() => Property.LandlordId" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/properties">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int PropertyId { get; set; }
+
+    [SupplyParameterFromForm]
+    private Property? Property { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Property ??= await context.Property.FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
+
+        if (Property is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateProperty()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Property!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!PropertyExists(Property!.PropertyId))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/properties");
+    }
+
+    private bool PropertyExists(int propertyid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Property.Any(e => e.PropertyId == propertyid);
+    }
+}

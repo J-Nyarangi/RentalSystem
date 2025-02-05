@@ -1,0 +1,79 @@
+﻿@page "/leases/create"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Lease</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Lease" OnValidSubmit="AddLease" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="startdate" class="form-label">StartDate:</label> 
+                <InputDate id="startdate" @bind-Value="Lease.StartDate" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Lease.StartDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="enddate" class="form-label">EndDate:</label> 
+                <InputDate id="enddate" @bind-Value="Lease.EndDate" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Lease.EndDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="rent" class="form-label">Rent:</label> 
+                <InputNumber id="rent" @bind-Value="Lease.Rent" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Lease.Rent" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="deposit" class="form-label">Deposit:</label> 
+                <InputNumber id="deposit" @bind-Value="Lease.Deposit" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Lease.Deposit" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paymentdueday" class="form-label">PaymentDueDay:</label> 
+                <InputDate id="paymentdueday" @bind-Value="Lease.PaymentDueDay" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Lease.PaymentDueDay" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="isactive" class="form-label">IsActive:</label> 
+                <InputCheckbox id="isactive" @bind-Value="Lease.IsActive" class="form-check-input" aria-required="true"/> 
+                <ValidationMessage For="() => Lease.IsActive" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="propertyid" class="form-label">PropertyId:</label> 
+                <InputNumber id="propertyid" @bind-Value="Lease.PropertyId" class="form-control" /> 
+                <ValidationMessage For="() => Lease.PropertyId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="tenantid" class="form-label">TenantId:</label> 
+                <InputNumber id="tenantid" @bind-Value="Lease.TenantId" class="form-control" /> 
+                <ValidationMessage For="() => Lease.TenantId" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/leases">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Lease Lease { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddLease()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Lease.Add(Lease);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/leases");
+    }
+}
