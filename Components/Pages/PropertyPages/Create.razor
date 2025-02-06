@@ -24,12 +24,18 @@
                 <label for="address" class="form-label">Address:</label> 
                 <InputText id="address" @bind-Value="Property.Address" class="form-control" aria-required="true"/> 
                 <ValidationMessage For="() => Property.Address" class="text-danger" /> 
-            </div>        
+            </div>
             <div class="mb-3">
-                <label for="landlordid" class="form-label">LandlordId:</label> 
-                <InputNumber id="landlordid" @bind-Value="Property.LandlordId" class="form-control" /> 
-                <ValidationMessage For="() => Property.LandlordId" class="text-danger" /> 
-            </div>        
+                <label for="landlordid" class="form-label">Assign to:</label>
+                <InputSelect id="landlordid" @bind-Value="Property.LandlordId" class="form-control">
+                    <option value="">Select a landlord</option>
+                    @foreach (var landlord in landlords)
+                    {
+                        <option value="@landlord.LandlordId">@landlord.FirstName @landlord.LastName</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Property.LandlordId" class="text-danger" />
+            </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -42,6 +48,14 @@
 @code {
     [SupplyParameterFromForm]
     private Property Property { get; set; } = new();
+
+    private List<Landlord> landlords = new List<Landlord>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		using var context = DbFactory.CreateDbContext();
+		landlords = await context.Landlords.ToListAsync();
+	}
 
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddProperty()

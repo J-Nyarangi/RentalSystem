@@ -14,10 +14,10 @@
     <a href="properties/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Properties">
+<QuickGrid Class="table" Items="context.Properties.Include(p => p.Landlord)">
     <PropertyColumn Property="property => property.Name" />
     <PropertyColumn Property="property => property.Address" />
-    <PropertyColumn Property="property => property.LandlordId" />
+    <PropertyColumn Property="property => property.Landlord.FirstName + ' ' + property.Landlord.LastName" Title="Assigned to:"/>
 
     <TemplateColumn Context="property">
         <a href="@($"properties/edit?propertyid={property.PropertyId}")">Edit</a> |

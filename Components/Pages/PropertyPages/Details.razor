@@ -21,8 +21,8 @@
             <dd class="col-sm-10">@property.Name</dd>
             <dt class="col-sm-2">Address</dt>
             <dd class="col-sm-10">@property.Address</dd>
-            <dt class="col-sm-2">LandlordId</dt>
-            <dd class="col-sm-10">@property.LandlordId</dd>
+            <dt class="col-sm-2">Assigned To:</dt>
+            <dd class="col-sm-10">@property.Landlord.FirstName @property.Landlord.LastName</dd>
         </dl>
         <div>
             <a href="@($"/properties/edit?propertyid={property.PropertyId}")">Edit</a> |
@@ -40,7 +40,7 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        property = await context.Properties.FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
+        property = await context.Properties.Include(p => p.Landlord).FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
 
         if (property is null)
         {
