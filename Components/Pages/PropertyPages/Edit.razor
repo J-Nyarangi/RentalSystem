@@ -33,8 +33,14 @@ else
                     <ValidationMessage For="() => Property.Address" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="landlordid" class="form-label">LandlordId:</label>
-                    <InputNumber id="landlordid" @bind-Value="Property.LandlordId" class="form-control" />
+                    <label for="landlordid" class="form-label">Assign to:</label>
+                    <InputSelect id="landlordid" @bind-Value="Property.LandlordId" class="form-control">
+                        <option value="">Select a landlord</option>
+                        @foreach (var landlord in landlords)
+                        {
+                            <option value="@landlord.LandlordId">@landlord.FirstName @landlord.LastName</option>
+                        }
+                    </InputSelect>
                     <ValidationMessage For="() => Property.LandlordId" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
@@ -53,12 +59,14 @@ else
 
     [SupplyParameterFromForm]
     private Property? Property { get; set; }
+    private List<Landlord> landlords = new List<Landlord>();    
 
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
         Property ??= await context.Properties.FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
 
+		landlords = await context.Landlords.ToListAsync();
         if (Property is null)
         {
             NavigationManager.NavigateTo("notfound");

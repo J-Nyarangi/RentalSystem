@@ -26,8 +26,8 @@
             <dd class="col-sm-10">@property.Address</dd>
         </dl>
         <dl class="row">
-            <dt class="col-sm-2">LandlordId</dt>
-            <dd class="col-sm-10">@property.LandlordId</dd>
+            <dt class="col-sm-2">Assigned to:</dt>
+            <dd class="col-sm-10">@property.Landlord.FirstName @property.Landlord.LastName</dd>
         </dl>
         <EditForm method="post" Model="property" OnValidSubmit="DeleteProperty" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(property is null)">Delete</button> |
@@ -45,7 +45,7 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        property = await context.Properties.FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
+        property = await context.Properties.Include(p => p.Landlord).FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
 
         if (property is null)
         {
