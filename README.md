@@ -1,4 +1,4 @@
-# RentalSystem# RentalSystem
+# RentalSystem# 
 
 ## Overview
 RentalSystem is a Blazor-based application designed to manage rental services. It provides a user-friendly interface for both customers and administrators to handle rental operations efficiently.
