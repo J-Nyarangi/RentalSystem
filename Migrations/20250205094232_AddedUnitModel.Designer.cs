@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalSystem.Data;
 
@@ -11,9 +12,11 @@ using RentalSystem.Data;
 namespace RentalSystem.Migrations
 {
     [DbContext(typeof(RentalSystemContext))]
-    partial class RentalSystemContextModelSnapshot : ModelSnapshot
+    [Migration("20250205094232_AddedUnitModel")]
+    partial class AddedUnitModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace RentalSystem.Migrations
 
                     b.HasKey("LandlordId");
 
-                    b.ToTable("Landlords");
+                    b.ToTable("Landlord");
                 });
 
             modelBuilder.Entity("RentalSystem.Models.Lease", b =>
@@ -83,42 +86,9 @@ namespace RentalSystem.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("UnitId")
-                        .IsUnique();
+                    b.HasIndex("UnitId");
 
-                    b.ToTable("Leases");
-                });
-
-            modelBuilder.Entity("RentalSystem.Models.Payment", b =>
-                {
-                    b.Property<int>("PaymentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DatePaid")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LeaseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PaymentId");
-
-                    b.HasIndex("LeaseId");
-
-                    b.ToTable("Payments");
+                    b.ToTable("Lease");
                 });
 
             modelBuilder.Entity("RentalSystem.Models.Property", b =>
@@ -143,7 +113,7 @@ namespace RentalSystem.Migrations
 
                     b.HasIndex("LandlordId");
 
-                    b.ToTable("Properties");
+                    b.ToTable("Property");
                 });
 
             modelBuilder.Entity("RentalSystem.Models.Tenant", b =>
@@ -176,7 +146,7 @@ namespace RentalSystem.Migrations
 
                     b.HasKey("TenantId");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenant");
                 });
 
             modelBuilder.Entity("RentalSystem.Models.Unit", b =>
@@ -198,7 +168,7 @@ namespace RentalSystem.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("Units");
+                    b.ToTable("Unit");
                 });
 
             modelBuilder.Entity("RentalSystem.Models.Lease", b =>
@@ -210,25 +180,14 @@ namespace RentalSystem.Migrations
                         .IsRequired();
 
                     b.HasOne("RentalSystem.Models.Unit", "Unit")
-                        .WithOne("Lease")
-                        .HasForeignKey("RentalSystem.Models.Lease", "UnitId")
+                        .WithMany("Leases")
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Tenant");
 
                     b.Navigation("Unit");
-                });
-
-            modelBuilder.Entity("RentalSystem.Models.Payment", b =>
-                {
-                    b.HasOne("RentalSystem.Models.Lease", "Lease")
-                        .WithMany()
-                        .HasForeignKey("LeaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lease");
                 });
 
             modelBuilder.Entity("RentalSystem.Models.Property", b =>
@@ -270,8 +229,7 @@ namespace RentalSystem.Migrations
 
             modelBuilder.Entity("RentalSystem.Models.Unit", b =>
                 {
-                    b.Navigation("Lease")
-                        .IsRequired();
+                    b.Navigation("Leases");
                 });
 #pragma warning restore 612, 618
         }

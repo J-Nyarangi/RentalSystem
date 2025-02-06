@@ -18,24 +18,12 @@
     }
     else {
         <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@property.Name</dd>
+        </dl>
+        <dl class="row">
             <dt class="col-sm-2">Address</dt>
             <dd class="col-sm-10">@property.Address</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">Unit_type</dt>
-            <dd class="col-sm-10">@property.Unit_type</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">Amount</dt>
-            <dd class="col-sm-10">@property.Amount</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">IsOccupied</dt>
-            <dd class="col-sm-10">@property.IsOccupied</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">Description</dt>
-            <dd class="col-sm-10">@property.Description</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">LandlordId</dt>
@@ -57,7 +45,7 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        property = await context.Property.FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
+        property = await context.Properties.FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
 
         if (property is null)
         {
@@ -68,7 +56,7 @@
     private async Task DeleteProperty()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Property.Remove(property!);
+        context.Properties.Remove(property!);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/properties");
     }

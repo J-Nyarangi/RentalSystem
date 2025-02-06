@@ -26,12 +26,12 @@ namespace RentalSystem.Models
         public bool IsActive { get; set; }
 
         //Foreign Key Properties
-        public int PropertyId { get; set; }
+        public int UnitId { get; set; }
 
         public int TenantId {  get; set; }
 
         //Navigation Properties
-        public Property Property { get; set; } = null!;
+        public Unit Unit { get; set; } = null!;
         public Tenant Tenant { get; set; } = null!;
     }
 }

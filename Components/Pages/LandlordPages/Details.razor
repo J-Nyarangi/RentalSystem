@@ -1,0 +1,50 @@
+﻿@page "/landlords/details"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Landlord</h2>
+    <hr />
+    @if (landlord is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">FirstName</dt>
+            <dd class="col-sm-10">@landlord.FirstName</dd>
+            <dt class="col-sm-2">LastName</dt>
+            <dd class="col-sm-10">@landlord.LastName</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@landlord.Email</dd>
+        </dl>
+        <div>
+            <a href="@($"/landlords/edit?landlordid={landlord.LandlordId}")">Edit</a> |
+            <a href="@($"/landlords")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Landlord? landlord;
+
+    [SupplyParameterFromQuery]
+    private int LandlordId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        landlord = await context.Landlords.FirstOrDefaultAsync(m => m.LandlordId == LandlordId);
+
+        if (landlord is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

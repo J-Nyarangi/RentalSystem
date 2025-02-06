@@ -32,7 +32,7 @@
             </div>        
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone:</label> 
-                <InputNumber id="phone" @bind-Value="Tenant.Phone" class="form-control" aria-required="true"/> 
+                <InputNumber id="phone" @bind-Value="Tenant.Phone" class="form-control" /> 
                 <ValidationMessage For="() => Tenant.Phone" class="text-danger" /> 
             </div>        
             <div class="mb-3">
@@ -62,7 +62,7 @@
     private async Task AddTenant()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Tenant.Add(Tenant);
+        context.Tenants.Add(Tenant);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/tenants");
     }

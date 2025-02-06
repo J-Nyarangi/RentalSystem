@@ -39,7 +39,7 @@ else
                 </div>
                 <div class="mb-3">
                     <label for="phone" class="form-label">Phone:</label>
-                    <InputNumber id="phone" @bind-Value="Tenant.Phone" class="form-control" aria-required="true"/>
+                    <InputNumber id="phone" @bind-Value="Tenant.Phone" class="form-control" />
                     <ValidationMessage For="() => Tenant.Phone" class="text-danger" />
                 </div>
                 <div class="mb-3">
@@ -72,7 +72,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        Tenant ??= await context.Tenant.FirstOrDefaultAsync(m => m.TenantId == TenantId);
+        Tenant ??= await context.Tenants.FirstOrDefaultAsync(m => m.TenantId == TenantId);
 
         if (Tenant is null)
         {
@@ -109,6 +109,6 @@ else
     private bool TenantExists(int tenantid)
     {
         using var context = DbFactory.CreateDbContext();
-        return context.Tenant.Any(e => e.TenantId == tenantid);
+        return context.Tenants.Any(e => e.TenantId == tenantid);
     }
 }

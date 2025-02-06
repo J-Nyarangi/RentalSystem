@@ -16,29 +16,14 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Property.Name" class="form-control" /> 
+                <ValidationMessage For="() => Property.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
                 <label for="address" class="form-label">Address:</label> 
                 <InputText id="address" @bind-Value="Property.Address" class="form-control" aria-required="true"/> 
                 <ValidationMessage For="() => Property.Address" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="unit_type" class="form-label">Unit_type:</label> 
-                <InputText id="unit_type" @bind-Value="Property.Unit_type" class="form-control" aria-required="true"/> 
-                <ValidationMessage For="() => Property.Unit_type" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="amount" class="form-label">Amount:</label> 
-                <InputNumber id="amount" @bind-Value="Property.Amount" class="form-control" aria-required="true"/> 
-                <ValidationMessage For="() => Property.Amount" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="isoccupied" class="form-label">IsOccupied:</label> 
-                <InputCheckbox id="isoccupied" @bind-Value="Property.IsOccupied" class="form-check-input" aria-required="true"/> 
-                <ValidationMessage For="() => Property.IsOccupied" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="description" class="form-label">Description:</label> 
-                <InputText id="description" @bind-Value="Property.Description" class="form-control" /> 
-                <ValidationMessage For="() => Property.Description" class="text-danger" /> 
             </div>        
             <div class="mb-3">
                 <label for="landlordid" class="form-label">LandlordId:</label> 
@@ -62,7 +47,7 @@
     private async Task AddProperty()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Property.Add(Property);
+        context.Properties.Add(Property);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/properties");
     }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalSystem.Data;
 
@@ -11,9 +12,11 @@ using RentalSystem.Data;
 namespace RentalSystem.Migrations
 {
     [DbContext(typeof(RentalSystemContext))]
-    partial class RentalSystemContextModelSnapshot : ModelSnapshot
+    [Migration("20250205100202_AddedPayments")]
+    partial class AddedPayments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,8 +86,7 @@ namespace RentalSystem.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("UnitId")
-                        .IsUnique();
+                    b.HasIndex("UnitId");
 
                     b.ToTable("Leases");
                 });
@@ -210,8 +212,8 @@ namespace RentalSystem.Migrations
                         .IsRequired();
 
                     b.HasOne("RentalSystem.Models.Unit", "Unit")
-                        .WithOne("Lease")
-                        .HasForeignKey("RentalSystem.Models.Lease", "UnitId")
+                        .WithMany("Leases")
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -270,8 +272,7 @@ namespace RentalSystem.Migrations
 
             modelBuilder.Entity("RentalSystem.Models.Unit", b =>
                 {
-                    b.Navigation("Lease")
-                        .IsRequired();
+                    b.Navigation("Leases");
                 });
 #pragma warning restore 612, 618
         }

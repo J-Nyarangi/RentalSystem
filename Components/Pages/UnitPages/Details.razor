@@ -1,0 +1,48 @@
+﻿@page "/units/details"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Unit</h2>
+    <hr />
+    @if (unit is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">UnitNumber</dt>
+            <dd class="col-sm-10">@unit.UnitNumber</dd>
+            <dt class="col-sm-2">PropertyId</dt>
+            <dd class="col-sm-10">@unit.PropertyId</dd>
+        </dl>
+        <div>
+            <a href="@($"/units/edit?unitid={unit.UnitId}")">Edit</a> |
+            <a href="@($"/units")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Unit? unit;
+
+    [SupplyParameterFromQuery]
+    private int UnitId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        unit = await context.Units.FirstOrDefaultAsync(m => m.UnitId == UnitId);
+
+        if (unit is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

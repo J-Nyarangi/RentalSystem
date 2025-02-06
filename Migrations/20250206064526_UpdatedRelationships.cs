@@ -5,7 +5,7 @@
 namespace RentalSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedPaymentLeaseTables : Migration
+    public partial class UpdatedRelationships : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

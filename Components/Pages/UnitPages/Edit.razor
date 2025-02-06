@@ -1,0 +1,94 @@
+﻿@page "/units/edit"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Unit</h2>
+<hr />
+@if (Unit is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Unit" OnValidSubmit="UpdateUnit" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Unit.UnitId" value="@Unit.UnitId" />
+                <div class="mb-3">
+                    <label for="unitnumber" class="form-label">UnitNumber:</label>
+                    <InputText id="unitnumber" @bind-Value="Unit.UnitNumber" class="form-control" />
+                    <ValidationMessage For="() => Unit.UnitNumber" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="propertyid" class="form-label">PropertyId:</label>
+                    <InputNumber id="propertyid" @bind-Value="Unit.PropertyId" class="form-control" />
+                    <ValidationMessage For="() => Unit.PropertyId" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/units">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int UnitId { get; set; }
+
+    [SupplyParameterFromForm]
+    private Unit? Unit { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Unit ??= await context.Units.FirstOrDefaultAsync(m => m.UnitId == UnitId);
+
+        if (Unit is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateUnit()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Unit!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!UnitExists(Unit!.UnitId))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/units");
+    }
+
+    private bool UnitExists(int unitid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Units.Any(e => e.UnitId == unitid);
+    }
+}

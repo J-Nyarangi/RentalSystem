@@ -42,8 +42,8 @@
             <dd class="col-sm-10">@lease.IsActive</dd>
         </dl>
         <dl class="row">
-            <dt class="col-sm-2">PropertyId</dt>
-            <dd class="col-sm-10">@lease.PropertyId</dd>
+            <dt class="col-sm-2">UnitId</dt>
+            <dd class="col-sm-10">@lease.UnitId</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">TenantId</dt>
@@ -65,7 +65,7 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        lease = await context.Lease.FirstOrDefaultAsync(m => m.LeaseId == LeaseId);
+        lease = await context.Leases.FirstOrDefaultAsync(m => m.LeaseId == LeaseId);
 
         if (lease is null)
         {
@@ -76,7 +76,7 @@
     private async Task DeleteLease()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Lease.Remove(lease!);
+        context.Leases.Remove(lease!);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/leases");
     }

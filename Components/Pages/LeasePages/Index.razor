@@ -14,14 +14,14 @@
     <a href="leases/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Lease">
+<QuickGrid Class="table" Items="context.Leases">
     <PropertyColumn Property="lease => lease.StartDate" />
     <PropertyColumn Property="lease => lease.EndDate" />
     <PropertyColumn Property="lease => lease.Rent" />
     <PropertyColumn Property="lease => lease.Deposit" />
     <PropertyColumn Property="lease => lease.PaymentDueDay" />
     <PropertyColumn Property="lease => lease.IsActive" />
-    <PropertyColumn Property="lease => lease.PropertyId" />
+    <PropertyColumn Property="lease => lease.UnitId" />
     <PropertyColumn Property="lease => lease.TenantId" />
 
     <TemplateColumn Context="lease">

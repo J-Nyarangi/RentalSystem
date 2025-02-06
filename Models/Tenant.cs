@@ -11,13 +11,16 @@ namespace RentalSystem.Models
 
         public string LastName { get; set; } = string.Empty;
 
-        public string Email {  get; set; } = string.Empty;
-        [Required]
+        public string? Email {  get; set; } = string.Empty;
+
         public int Phone { get; set; }
 
-        public string Emergency_Contact_Name { get; set; } = string.Empty;
+        public string? Emergency_Contact_Name { get; set; } = string.Empty;
 
-        public int Emergency_Contact_Phone { get; set; }
+        public int? Emergency_Contact_Phone { get; set; }
+
+        // A tenant can rent multiple units (via leases).
+        public ICollection<Lease> Leases { get; set; } = new List<Lease>();
 
 
     }

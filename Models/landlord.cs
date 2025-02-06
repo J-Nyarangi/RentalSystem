@@ -12,6 +12,7 @@ namespace RentalSystem.Models
 
         public string Email { get; set; } = string.Empty;
 
-        public List<Property> Properties { get; set; } = new();
+        //Landlord can have many properties
+        public ICollection<Property> Properties { get; set; } = new List<Property>();   
     }
 }

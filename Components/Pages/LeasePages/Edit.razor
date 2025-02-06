@@ -53,9 +53,9 @@ else
                     <ValidationMessage For="() => Lease.IsActive" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="propertyid" class="form-label">PropertyId:</label>
-                    <InputNumber id="propertyid" @bind-Value="Lease.PropertyId" class="form-control" />
-                    <ValidationMessage For="() => Lease.PropertyId" class="text-danger" />
+                    <label for="unitid" class="form-label">UnitId:</label>
+                    <InputNumber id="unitid" @bind-Value="Lease.UnitId" class="form-control" />
+                    <ValidationMessage For="() => Lease.UnitId" class="text-danger" />
                 </div>
                 <div class="mb-3">
                     <label for="tenantid" class="form-label">TenantId:</label>
@@ -82,7 +82,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        Lease ??= await context.Lease.FirstOrDefaultAsync(m => m.LeaseId == LeaseId);
+        Lease ??= await context.Leases.FirstOrDefaultAsync(m => m.LeaseId == LeaseId);
 
         if (Lease is null)
         {
@@ -119,6 +119,6 @@ else
     private bool LeaseExists(int leaseid)
     {
         using var context = DbFactory.CreateDbContext();
-        return context.Lease.Any(e => e.LeaseId == leaseid);
+        return context.Leases.Any(e => e.LeaseId == leaseid);
     }
 }

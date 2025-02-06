@@ -57,7 +57,7 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        tenant = await context.Tenant.FirstOrDefaultAsync(m => m.TenantId == TenantId);
+        tenant = await context.Tenants.FirstOrDefaultAsync(m => m.TenantId == TenantId);
 
         if (tenant is null)
         {
@@ -68,7 +68,7 @@
     private async Task DeleteTenant()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Tenant.Remove(tenant!);
+        context.Tenants.Remove(tenant!);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/tenants");
     }

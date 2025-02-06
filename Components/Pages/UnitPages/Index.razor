@@ -1,0 +1,37 @@
+﻿@page "/units"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using RentalSystem.Models
+@using RentalSystem.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="units/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Units">
+    <PropertyColumn Property="unit => unit.UnitNumber" />
+    <PropertyColumn Property="unit => unit.PropertyId" />
+
+    <TemplateColumn Context="unit">
+        <a href="@($"units/edit?unitid={unit.UnitId}")">Edit</a> |
+        <a href="@($"units/details?unitid={unit.UnitId}")">Details</a> |
+        <a href="@($"units/delete?unitid={unit.UnitId}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private RentalSystemContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

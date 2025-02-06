@@ -14,12 +14,9 @@
     <a href="properties/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Property">
+<QuickGrid Class="table" Items="context.Properties">
+    <PropertyColumn Property="property => property.Name" />
     <PropertyColumn Property="property => property.Address" />
-    <PropertyColumn Property="property => property.Unit_type" />
-    <PropertyColumn Property="property => property.Amount" />
-    <PropertyColumn Property="property => property.IsOccupied" />
-    <PropertyColumn Property="property => property.Description" />
     <PropertyColumn Property="property => property.LandlordId" />
 
     <TemplateColumn Context="property">

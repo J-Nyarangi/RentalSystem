@@ -1,0 +1,99 @@
+﻿@page "/landlords/edit"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Landlord</h2>
+<hr />
+@if (Landlord is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Landlord" OnValidSubmit="UpdateLandlord" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Landlord.LandlordId" value="@Landlord.LandlordId" />
+                <div class="mb-3">
+                    <label for="firstname" class="form-label">FirstName:</label>
+                    <InputText id="firstname" @bind-Value="Landlord.FirstName" class="form-control" />
+                    <ValidationMessage For="() => Landlord.FirstName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastname" class="form-label">LastName:</label>
+                    <InputText id="lastname" @bind-Value="Landlord.LastName" class="form-control" />
+                    <ValidationMessage For="() => Landlord.LastName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Landlord.Email" class="form-control" />
+                    <ValidationMessage For="() => Landlord.Email" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/landlords">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int LandlordId { get; set; }
+
+    [SupplyParameterFromForm]
+    private Landlord? Landlord { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Landlord ??= await context.Landlords.FirstOrDefaultAsync(m => m.LandlordId == LandlordId);
+
+        if (Landlord is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateLandlord()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Landlord!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!LandlordExists(Landlord!.LandlordId))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/landlords");
+    }
+
+    private bool LandlordExists(int landlordid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Landlords.Any(e => e.LandlordId == landlordid);
+    }
+}
