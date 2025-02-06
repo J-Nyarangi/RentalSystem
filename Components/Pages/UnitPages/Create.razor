@@ -21,10 +21,16 @@
                 <ValidationMessage For="() => Unit.UnitNumber" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="propertyid" class="form-label">PropertyId:</label> 
-                <InputNumber id="propertyid" @bind-Value="Unit.PropertyId" class="form-control" /> 
-                <ValidationMessage For="() => Unit.PropertyId" class="text-danger" /> 
-            </div>        
+                <label for="propertyid" class="form-label">Property:</label>
+                <InputSelect id="propertyid" @bind-Value="Unit.PropertyId" class="form-control">
+                    <option value="">Select a property</option>
+                    @foreach (var property in properties)
+                    {
+                        <option value="@property.PropertyId">@property.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Unit.PropertyId" class="text-danger" />
+            </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -37,6 +43,14 @@
 @code {
     [SupplyParameterFromForm]
     private Unit Unit { get; set; } = new();
+
+	private List<Property> properties { get; set; } = new List<Property>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		using var context = DbFactory.CreateDbContext();
+		properties = await context.Properties.ToListAsync();
+	}
 
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddUnit()

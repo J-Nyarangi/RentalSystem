@@ -14,9 +14,9 @@
     <a href="units/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Units">
+<QuickGrid Class="table" Items="context.Units.Include(u => u.Property)">
     <PropertyColumn Property="unit => unit.UnitNumber" />
-    <PropertyColumn Property="unit => unit.PropertyId" />
+    <PropertyColumn Property="unit => unit.Property.Name" Title="Property" />
 
     <TemplateColumn Context="unit">
         <a href="@($"units/edit?unitid={unit.UnitId}")">Edit</a> |
