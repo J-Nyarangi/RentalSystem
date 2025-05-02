@@ -1,6 +1,8 @@
-@page "/properties"
+@page "/properties/edit"
 @rendermode InteractiveServer
 @attribute [Authorize]
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.EntityFrameworkCore
 @using RentalSystem.Models
 @inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
@@ -15,22 +17,24 @@
                     <i class="bi bi-building-fill" style="color:darkorange; font-size:1.5rem;"></i>
                 </div>
                 <div>
-                    <h3 class="mb-1 fw-bold" style="color:#333;">Properties</h3>
-                    <small class="text-muted">Manage your properties</small>
+                    <h3 class="mb-1 fw-bold" style="color:#333;">Edit Property</h3>
+                    <small class="text-muted">Update property details</small>
                 </div>
             </div>
-            <a href="/properties/create"
-               class="btn btn-primary d-flex align-items-center gap-2"
-               style="background-color:darkorange; border-color:darkorange; border-radius:8px; padding: 8px 16px; font-weight: 500; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <i class="bi bi-plus-circle"></i>
-                <span>Add New Property</span>
-            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/properties"
+                   class="btn btn-light d-flex align-items-center gap-2"
+                   style="border-radius:8px; padding: 8px 16px; font-weight: 500; border: 1px solid #dee2e6;">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Back to List</span>
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-12">
-            @if (properties == null)
+            @if (selectedProperty == null)
             {
                 <div class="text-center">
                     <div class="spinner-border text-warning" role="status">
@@ -38,71 +42,278 @@
                     </div>
                 </div>
             }
-            else if (!properties.Any())
-            {
-                <div class="text-center text-danger p-3">
-                    No properties found.
-                </div>
-            }
             else
             {
-                @foreach (var property in properties)
-                {
-                    <div class="card mb-3" style="background-color:#f9f9f9; border-radius:8px;">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-8">
-                                    <dl class="row">
-                                        <dt class="col-sm-2">Name</dt>
-                                        <dd class="col-sm-10">@property.Name</dd>
-                                        <dt class="col-sm-2">Address</dt>
-                                        <dd class="col-sm-10">@property.Address</dd>
-                                        <dt class="col-sm-2">Assigned To:</dt>
-                                        <dd class="col-sm-10">@property.Landlord?.FirstName @property.Landlord?.LastName</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <div class="btn-group">
-                                        <a href="@($"/properties/details?propertyid={property.PropertyId}")"
-                                           class="btn btn-sm btn-outline-secondary"
-                                           title="View">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-                                        <a href="@($"/properties/edit?propertyid={property.PropertyId}")"
-                                           class="btn btn-sm btn-outline-primary"
-                                           title="Edit">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-danger"
-                                                @onclick="@(() => DeleteProperty(property))"
-                                                title="Delete">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                <EditForm Model="selectedProperty" OnValidSubmit="UpdatePropertyAsync" FormName="EditProperty">
+                    <DataAnnotationsValidator />
+                    <div class="card p-3 mb-3" style="background-color:#f9f9f9;border-radius:8px;">
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label">Property Name</label>
+                                <InputText @bind-Value="selectedProperty.Name" class="form-control" />
+                                <ValidationMessage For="@(() => selectedProperty.Name)" class="text-danger" />
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label">Address</label>
+                                <InputText @bind-Value="selectedProperty.Address" class="form-control" />
+                                <ValidationMessage For="@(() => selectedProperty.Address)" class="text-danger" />
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label">City</label>
+                                <InputText @bind-Value="selectedProperty.City" class="form-control" />
+                                <ValidationMessage For="@(() => selectedProperty.City)" class="text-danger" />
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label">Property Type</label>
+                                <InputSelect @bind-Value="selectedProperty.PropertyType" class="form-select">
+                                    <option value="">Select Property Type</option>
+                                    <option value="Apartment">Apartment</option>
+                                    <option value="House">House</option>
+                                    <option value="Commercial">Commercial</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => selectedProperty.PropertyType)" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label">Landlord</label>
+                                <InputSelect @bind-Value="selectedProperty.LandlordId" class="form-select">
+                                    <option value="0">Select Landlord</option>
+                                    @foreach (var landlord in landlords)
+                                    {
+                                        <option value="@landlord.LandlordId">@landlord.FirstName @landlord.LastName</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => selectedProperty.LandlordId)" class="text-danger" />
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label">Status</label>
+                                <InputSelect @bind-Value="selectedProperty.Status" class="form-select">
+                                    <option value="Draft">Draft</option>
+                                    <option value="Published">Published</option>
+                                    <option value="Archived">Archived</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => selectedProperty.Status)" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label">Total Units</label>
+                                <InputNumber @bind-Value="selectedProperty.TotalUnits" class="form-control" disabled />
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label">Description</label>
+                                <InputTextArea @bind-Value="selectedProperty.Description" class="form-control" />
+                                <ValidationMessage For="@(() => selectedProperty.Description)" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label">Attach Images</label>
+                                <InputFile OnChange="HandleFileSelected" class="form-control" multiple />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" style="background-color:darkorange;border-color:darkorange;border-radius:8px;">
+                            Save Changes
+                        </button>
                     </div>
-                }
+                </EditForm>
+
+                <div class="my-1">
+                    <button class="btn btn-primary btn-sm text-capitalize" @onclick="OpenDrawerForAdd">
+                        <i class="bi bi-plus-circle me-2"></i>Add New Unit
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr class="table-primary">
+                                <th>Unit ID</th>
+                                <th>Unit Number</th>
+                                <th>Type</th>
+                                <th>Size (sqft)</th>
+                                <th>Rent Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (selectedProperty.Units != null && selectedProperty.Units.Any())
+                            {
+                                foreach (var unit in selectedProperty.Units)
+                                {
+                                    <tr>
+                                        <td class="p-3">@unit.UnitId</td>
+                                        <td class="p-3">@unit.UnitNumber</td>
+                                        <td class="p-3">@unit.UnitType</td>
+                                        <td class="p-3">@unit.Size</td>
+                                        <td class="p-3">@unit.RentAmount</td>
+                                        <td class="p-3">@unit.Status</td>
+                                        <td class="p-3 text-center">
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-secondary" @onclick="@(() => ViewUnit(unit))" title="View">
+                                                    <i class="bi bi-eye-fill"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary" @onclick="@(() => EditUnit(unit))" title="Edit">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" @onclick="@(() => DeleteUnit(unit))" title="Delete">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center text-danger p-3">No units added...</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             }
         </div>
     </div>
+
+    <!-- Offcanvas for Add/Edit/View Unit -->
+    <UnitOffcanvas @bind-DrawerOpen="drawerOpen"
+                   @bind-IsEditing="isEditing"
+                   @bind-IsViewing="isViewing"
+                   SelectedProperty="selectedProperty"
+                   SelectedUnit="selectedUnit"
+                   OnAddUnit="AddUnitAsync"
+                   OnUpdateUnit="UpdateUnitAsync"
+                   OnClose="CloseDrawer" />
 </div>
 
 @code {
-    private List<Property> properties = new();
+    private Property? selectedProperty;
+    private List<Landlord> landlords = new();
+    private Unit? selectedUnit;
+    private bool drawerOpen = false;
+    private bool isEditing = false;
+    private bool isViewing = false;
+
+    [SupplyParameterFromQuery]
+    private int PropertyId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        properties = await context.Properties.Include(p => p.Landlord).ToListAsync();
+        selectedProperty = await context.Properties
+            .FromSqlRaw(@"
+                SELECT p.PropertyId, p.Name, p.Address, p.City, p.PropertyType, p.Status, p.TotalUnits, p.Description, p.LandlordId,
+                       l.LandlordId AS Landlord_LandlordId, l.FirstName AS Landlord_FirstName, l.LastName AS Landlord_LastName, l.Email AS Landlord_Email
+                FROM Property p
+                INNER JOIN Landlord l ON p.LandlordId = l.LandlordId
+                WHERE p.PropertyId = {0}", PropertyId)
+            .Include(p => p.Landlord)
+            .Include(p => p.Units)
+            .FirstOrDefaultAsync();
+
+        landlords = await context.Landlords.ToListAsync();
+
+        if (selectedProperty == null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
     }
 
-    private async Task DeleteProperty(Property property)
+    private async Task UpdatePropertyAsync()
     {
+        if (selectedProperty == null) return;
+
         using var context = DbFactory.CreateDbContext();
-        context.Properties.Remove(property);
-        await context.SaveChangesAsync();
-        properties.Remove(property);
+        await context.Database.ExecuteSqlRawAsync(@"
+            UPDATE Property
+            SET Name = {0}, Address = {1}, City = {2}, PropertyType = {3}, Status = {4}, TotalUnits = {5}, Description = {6}, LandlordId = {7}
+            WHERE PropertyId = {8}",
+            selectedProperty.Name, selectedProperty.Address, selectedProperty.City, selectedProperty.PropertyType,
+            selectedProperty.Status, selectedProperty.Units.Count, selectedProperty.Description, selectedProperty.LandlordId,
+            selectedProperty.PropertyId);
+
+        NavigationManager.NavigateTo("/properties");
     }
+
+    private void OpenDrawerForAdd()
+    {
+        selectedUnit = new Unit { PropertyId = PropertyId };
+        isEditing = false;
+        isViewing = false;
+        drawerOpen = true;
+    }
+
+    private void EditUnit(Unit unit)
+    {
+        selectedUnit = unit;
+        isEditing = true;
+        isViewing = false;
+        drawerOpen = true;
+    }
+
+    private void ViewUnit(Unit unit)
+    {
+        selectedUnit = unit;
+        isViewing = true;
+        isEditing = false;
+        drawerOpen = true;
+    }
+
+    private void CloseDrawer()
+    {
+        drawerOpen = false;
+        isEditing = false;
+        isViewing = false;
+        selectedUnit = null;
+    }
+
+    private async Task AddUnitAsync()
+    {
+        if (selectedUnit == null || selectedProperty == null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        await context.Database.ExecuteSqlRawAsync(@"
+            INSERT INTO Unit (PropertyId, UnitNumber, UnitType, Size, RentAmount, Status, Floor, Description)
+            VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})",
+            selectedUnit.PropertyId, selectedUnit.UnitNumber, selectedUnit.UnitType, selectedUnit.Size,
+            selectedUnit.RentAmount, selectedUnit.Status, selectedUnit.Floor, selectedUnit.Description);
+
+        selectedProperty.Units.Add(selectedUnit);
+        selectedProperty.TotalUnits = selectedProperty.Units.Count;
+
+        CloseDrawer();
+    }
+
+    private async Task UpdateUnitAsync()
+    {
+        if (selectedUnit == null || selectedProperty == null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        await context.Database.ExecuteSqlRawAsync(@"
+            UPDATE Unit
+            SET UnitNumber = {0}, UnitType = {1}, Size = {2}, RentAmount = {3}, Status = {4}, Floor = {5}, Description = {6}
+            WHERE UnitId = {7}",
+            selectedUnit.UnitNumber, selectedUnit.UnitType, selectedUnit.Size, selectedUnit.RentAmount,
+            selectedUnit.Status, selectedUnit.Floor, selectedUnit.Description, selectedUnit.UnitId);
+
+        CloseDrawer();
+    }
+
+    private async Task DeleteUnit(Unit unit)
+    {
+        if (selectedProperty == null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        await context.Database.ExecuteSqlRawAsync("DELETE FROM Unit WHERE UnitId = {0}", unit.UnitId);
+        selectedProperty.Units.Remove(unit);
+        selectedProperty.TotalUnits = selectedProperty.Units.Count;
+    }
+
+    private Task HandleFileSelected(InputFileChangeEventArgs e) => Task.CompletedTask;
 }
