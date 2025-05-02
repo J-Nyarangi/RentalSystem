@@ -1,93 +1,50 @@
-@page "/rental/properties"
-@rendermode InteractiveServer
-@attribute [Authorize]
-@using YourNamespace.Models
+@page "/properties/details"
+@using Microsoft.EntityFrameworkCore
+@using RentalSystem.Models
+@inject IDbContextFactory<RentalSystem.Data.RentalSystemContext> DbFactory
+@inject NavigationManager NavigationManager
 
-<div class="container-fluid py-2">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-3">
-                <div class="bg-light p-2 rounded-circle d-flex align-items-center justify-content-center" style="height: 48px; width: 48px;">
-                    <i class="bi bi-building-fill" style="color:darkorange; font-size:1.5rem;"></i>
-                </div>
-                <div>
-                    <h3 class="mb-1 fw-bold" style="color:#333;">Properties</h3>
-                    <small class="text-muted">Manage your properties</small>
-                </div>
-            </div>
-            <a href="/rental/add-property"
-               class="btn btn-primary d-flex align-items-center gap-2"
-               style="background-color:darkorange; border-color:darkorange; border-radius:8px; padding: 8px 16px; font-weight: 500; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <i class="bi bi-plus-circle"></i>
-                <span>Add New Property</span>
-            </a>
-        </div>
-    </div>
+<PageTitle>Details</PageTitle>
 
-    <div class="row">
-        <div class="col-12">
-            @if (properties == null)
-            {
-                <div class="text-center">
-                    <div class="spinner-border text-warning" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            }
-            else if (!properties.Any())
-            {
-                <div class="text-center text-danger p-3">
-                    No properties found.
-                </div>
-            }
-            else
-            {
-                @foreach (var property in properties)
-                {
-                    <div class="card mb-3" style="background-color:#f9f9f9; border-radius:8px;">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-8">
-                                    <dl class="row">
-                                        <dt class="col-sm-2">Name</dt>
-                                        <dd class="col-sm-10">@property.Name</dd>
-                                        <dt class="col-sm-2">Address</dt>
-                                        <dd class="col-sm-10">@property.Address</dd>
-                                        <dt class="col-sm-2">Assigned To:</dt>
-                                        <dd class="col-sm-10">@property.Landlord?.FirstName @property.Landlord?.LastName</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <div class="btn-group">
-                                        <a href="/rental/view-property/@property.PropertyId"
-                                           class="btn btn-sm btn-outline-secondary"
-                                           title="View">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-                                        <a href="/rental/edit-property/@property.PropertyId"
-                                           class="btn btn-sm btn-outline-primary"
-                                           title="Edit">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-danger"
-                                                @onclick="@(() => DeleteProperty(property))"
-                                                title="Delete">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
+<h1>Details</h1>
+
+<div>
+    <h2>Property</h2>
+    <hr />
+    @if (property is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@property.Name</dd>
+            <dt class="col-sm-2">Address</dt>
+            <dd class="col-sm-10">@property.Address</dd>
+            <dt class="col-sm-2">Assigned To:</dt>
+            <dd class="col-sm-10">@property.Landlord.FirstName @property.Landlord.LastName</dd>
+        </dl>
+        <div>
+            <a href="@($"/properties/edit?propertyid={property.PropertyId}")">Edit</a> |
+            <a href="@($"/properties")">Back to List</a>
         </div>
-    </div>
+    }
 </div>
 
 @code {
-    private List<Property> properties = new();
+    private Property? property;
 
-    private Task DeleteProperty(Property property) => Task.CompletedTask;
+    [SupplyParameterFromQuery]
+    private int PropertyId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        property = await context.Properties.Include(p => p.Landlord).FirstOrDefaultAsync(m => m.PropertyId == PropertyId);
+
+        if (property is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
 }
