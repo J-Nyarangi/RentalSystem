@@ -1,0 +1,104 @@
+@page "/rental/properties"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@using YourNamespace.Models
+
+<div class="container-fluid py-2">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-light p-2 rounded-circle d-flex align-items-center justify-content-center" style="height: 48px; width: 48px;">
+                    <i class="bi bi-building-fill" style="color:darkorange; font-size:1.5rem;"></i>
+                </div>
+                <div>
+                    <h3 class="mb-1 fw-bold" style="color:#333;">Properties</h3>
+                    <small class="text-muted">Manage your properties</small>
+                </div>
+            </div>
+            <a href="/rental/add-property"
+               class="btn btn-primary d-flex align-items-center gap-2"
+               style="background-color:darkorange; border-color:darkorange; border-radius:8px; padding: 8px 16px; font-weight: 500; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <i class="bi bi-plus-circle"></i>
+                <span>Add New Property</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (properties == null)
+            {
+                <div class="text-center">
+                    <div class="spinner-border text-warning" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (!properties.Any())
+            {
+                <div class="text-center text-danger p-3">
+                    No properties found.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr class="table-primary">
+                                <th>Property ID</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Total Units</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var property in properties)
+                            {
+                                <tr>
+                                    <td class="p-3">@property.PropertyId</td>
+                                    <td class="p-3">@property.Name</td>
+                                    <td class="p-3">@property.Address</td>
+                                    <td class="p-3">@property.City</td>
+                                    <td class="p-3">@property.PropertyType</td>
+                                    <td class="p-3">@property.Status</td>
+                                    <td class="p-3">@property.TotalUnits</td>
+                                    <td class="p-3 text-center">
+                                        <div class="btn-group">
+                                            <a href="/rental/view-property/@property.PropertyId"
+                                               class="btn btn-sm btn-outline-secondary"
+                                               title="View">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+                                            <a href="/rental/edit-property/@property.PropertyId"
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                    @onclick="@(() => DeleteProperty(property))"
+                                                    title="Delete">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Property> properties = new();
+
+    private Task DeleteProperty(Property property) => Task.CompletedTask;
+}
